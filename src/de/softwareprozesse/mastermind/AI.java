@@ -33,6 +33,16 @@ public class AI {
 		
 	}
 	
+	/**
+	 * Removes all patterns that have any color at the same position as
+	 * the given pattern
+	 * @param guess
+	 */
+	private void removePatternWithSamePositions(Pattern guess) {
+		for (int i = 0; i < Settings.NUMBER_OF_PEGS; i++) 
+			removeAllPatterns(guess.getColor(i), i);
+	}
+	
 	private void removePatternsContainingImpossibleColors(Pattern guess, PatternAnalysis response) {
 		if (gotAllColorsRight()) {
 			removeExcessColors(guess);
@@ -106,6 +116,22 @@ public class AI {
 		for (PatternBuilder pb : l)
 			res.add(pb.build());
 		return res;
+	}
+	
+	private boolean containsAnyPatternColorOnPosition(Pattern[] guesses, Color c, int pos) {
+		boolean res = false;
+		for (Pattern p : guesses)
+			if (containsPatternColorOnPosition(p, c, pos))
+				res = true;
+		return res;			
+	}
+	
+	private List<Pattern> getPatternsWithZeroRightPositions(Pattern[] guesses, PatternAnalysis[] responses) {
+		
+	}
+	
+	private boolean containsPatternColorOnPosition(Pattern guess, Color c, int pos) {
+		return guess.getColor(pos).equals(c);
 	}
 	
 	private List<PatternBuilder> permutate(List<PatternBuilder> l, List<Color> colors, int i) {

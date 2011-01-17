@@ -9,10 +9,12 @@ public class Mastermind {
 	private int numberOfGuesses;
 	private final Pattern[] guesses;
 	private final PatternAnalysis[] responses;
+	private final AI ai;
 	
-	public Mastermind(Pattern solution) {
+	public Mastermind(Pattern solution, boolean ai) {
 		numberOfGuesses = 0;
 		this.solution = solution;
+		this.ai = (ai ? new AI(this) : null);
 		guesses = new Pattern[Settings.MAX_GUESSES];
 		responses = new PatternAnalysis[Settings.MAX_GUESSES];
 	}
@@ -27,19 +29,11 @@ public class Mastermind {
 		Pattern p;
 		if (getNumberOfGuesses() == 0)
 			p = PatternBuilder.createRandomPattern();
-		else {
-			PatternAnalysis lastresponse = getResponse(getNumberOfGuesses());
-			if (lastresponse.getNumberOfCorrectColoredPins() + lastresponse.getNumberOfCorrectPositionedPins() < Settings.NUMBER_OF_PEGS)
-				;
-		}
-			
+		else
+			p = ai.pickPattern();
 		return p;
 	}
-	
-	private void getRightColors() {
 		
-	}
-	
 	/**
 	 * checks if game is finished
 	 * @return

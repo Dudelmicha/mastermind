@@ -13,10 +13,14 @@ public class AI {
 
 	private final List<Pattern> possiblePattern;
 	private final Map<Color, List<Integer>> possiblePositions;
+	private final Mastermind mastermind;
+	private final List<Color> possibleColors;
 	
-	public AI() {
+	public AI(Mastermind mastermind) {
 		possiblePattern = generateAllPossiblePatterns();
+		this.mastermind = mastermind;
 		possiblePositions = new HashMap<Color, List<Integer>>();
+		possibleColors = Arrays.asList(Color.values());
 		for (Color c : Color.values()) {
 			List<Integer> l = new LinkedList<Integer>();
 			for (int i = 0; i < Settings.NUMBER_OF_PEGS; i++)
@@ -29,9 +33,41 @@ public class AI {
 		
 	}
 	
-	private void removeAllPatternsWithColor(Color c) {
+	private void removePatternsContainingImpossibleColors(Pattern guess, PatternAnalysis response) {
+		if (gotAllColorsRight()) {
+			removeExcessColors(guess);
+		} else {
+			removePatternsWithColors(guess.getColors());
+		}
+	}
+	
+	private void removeExcessColors(Pattern guess) {
+		if (gotExcessColors())
+			for (Color c : guess.getNotContainingColors()) {
+				removePatternsWithColor(c);
+				possibleColors.remove(c);
+			}
+	}
+	
+	private boolean gotExcessColors() {
+		return possibleColors.size() == Settings.NUMBER_OF_PEGS;
+	}
+
+	private boolean gotAllColorsRight() {
+		PatternAnalysis lastresponse = mastermind.getResponse(mastermind.getNumberOfGuesses());
+		return lastresponse.getNumberOfCorrectColoredPins() + lastresponse.getNumberOfCorrectPositionedPins() == Settings.NUMBER_OF_PEGS;
+	}
+	
+	//TODO refactor
+	private void removePatternsWithColor(Color c) {
 		for (Pattern p : possiblePattern)
 			if (p.contains(c))
+				possiblePattern.remove(p);
+	}
+	
+	private void removePatternsWithColors(List<Color> colors) {
+		for (Pattern p : possiblePattern)
+			if (p.contains(colors))
 				possiblePattern.remove(p);
 	}
 	
@@ -97,5 +133,9 @@ public class AI {
 		for (PatternBuilder pb : l)
 			pb.setColor(c, pos);
 		return l;
+	}
+
+	public Pattern pickPattern() {
+		return possiblePattern.get(0);
 	}
 }

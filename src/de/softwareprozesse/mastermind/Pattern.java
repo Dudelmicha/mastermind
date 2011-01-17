@@ -1,5 +1,8 @@
 package de.softwareprozesse.mastermind;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 import de.softwareprozesse.mastermind.utils.Settings;
@@ -76,11 +79,44 @@ public class Pattern {
 		return new PatternAnalysis(correctPos, correctColor);
 	}
 	
+	public List<Color> getNotContainingColors() {
+		List<Color> res = new LinkedList<Color>();
+		for (Color c : Color.values())
+			if (!contains(c))
+				res.add(c);
+		return res;
+	}
+	
+	public boolean contains(Color othercolor) {
+		boolean res = false;
+		for (Color c : holes)
+			if (c.equals(othercolor))
+				res = true;
+		return res;
+	}
+	
+	public boolean contains(Color othercolor, int pos) {
+		return getColor(pos).equals(othercolor);
+	}
+	
 	@Override
 	public String toString() {
 		String res = "";
 		for (Color c : holes) {
 			res += c.toString();
+		}
+		return res;
+	}
+
+	public List<Color> getColors() {
+		return Arrays.asList(holes);
+	}
+
+	public boolean contains(List<Color> colors) {
+		boolean res = true;
+		for (Color c : colors) {
+			if (!contains(c))
+				res = false;
 		}
 		return res;
 	}

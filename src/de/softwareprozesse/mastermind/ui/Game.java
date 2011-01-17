@@ -20,6 +20,7 @@ public class Game {
 		Pattern solution;
 		Scanner scanner = new Scanner(System.in);
 		byte answer;
+		boolean ai;
 		System.out.println("Welcome to Mastermind");
 		do {
 			System.out.println("Would you like to be the codemaker (1) or " +
@@ -30,14 +31,16 @@ public class Game {
 		if (answer == 1) {
 			System.out.println("Alright. Please create a code.");
 			solution = null;
+			ai = false;
 		} else {
 			solution = PatternBuilder.createRandomPattern();
 			System.out.println("Okay. A code has been created for you. Please, enter your first guess. ");
+			ai = true;
 			
 		}
 		System.out.println("These are the available colors and their numerical representation: ");
 		System.out.println(Color.allColorsToString());
-		new Game(new Mastermind(solution));
+		new Game(new Mastermind(solution, ai));
 	}
 	
 	private void startGame() {

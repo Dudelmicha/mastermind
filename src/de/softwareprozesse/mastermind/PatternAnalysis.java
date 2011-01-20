@@ -10,6 +10,10 @@ public class PatternAnalysis {
 		this.numberOfCorrectColoredPins = numberOfCorrectColoredPins;
 	}
 
+	public boolean isNoColorAtRightPosition() {
+		return numberOfCorrectPositionedPins == 0;
+	}
+	
 	public int getNumberOfCorrectPositionedPins() {
 		return numberOfCorrectPositionedPins;
 	}

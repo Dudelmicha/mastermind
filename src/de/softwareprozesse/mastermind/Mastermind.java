@@ -20,14 +20,14 @@ public class Mastermind {
 	}
 	
 	public PatternAnalysis commitGuess(Pattern p) {
+		setGuess(p);
 		numberOfGuesses++;
-		setGuess(p, numberOfGuesses);
-		return setResponse(p.analyze(solution), numberOfGuesses);
+		return p.analyze(solution);
 	}
 	
 	public Pattern createGuess() {
 		Pattern p;
-		if (getNumberOfGuesses() == 0)
+		if (numberOfGuesses == 0)
 			p = PatternBuilder.createRandomPattern();
 		else
 			p = ai.pickPattern();
@@ -62,8 +62,8 @@ public class Mastermind {
 		return guesses[i - 1];
 	}
 	
-	private Pattern setGuess(Pattern p, int i) {
-		return guesses[i - 1] = p;
+	private Pattern setGuess(Pattern p) {
+		return guesses[numberOfGuesses] = p;
 	}
 	
 	public PatternAnalysis getResponse(int i) {
@@ -71,7 +71,15 @@ public class Mastermind {
 		return responses[i - 1];
 	}
 	
-	private PatternAnalysis setResponse(PatternAnalysis pa, int i) {
-		return responses[i - 1] = pa;
+	private PatternAnalysis setResponse(PatternAnalysis pa) {
+		return responses[numberOfGuesses - 1] = pa;
+	}
+
+	public Pattern getLastGuessedPattern() {
+		return getGuess(numberOfGuesses);
+	}
+
+	public PatternAnalysis getLastPatternAnalysis() {
+		return getResponse(numberOfGuesses);
 	}
 }

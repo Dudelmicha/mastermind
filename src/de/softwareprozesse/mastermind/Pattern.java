@@ -32,6 +32,15 @@ public class Pattern {
 			return pb.build();
 		}
 		
+		@Deprecated
+		public int getNextUnsetPosition(int pos) {
+			while (++pos < holes.length) {
+				if (holes[pos] == null)
+					return pos;
+			}
+			return -1;
+		}
+		
 		public PatternBuilder setColor(Color color, int pos) {
 			assert 0 <= pos && pos < Settings.NUMBER_OF_PEGS;
 			holes[pos] = color;
@@ -44,6 +53,14 @@ public class Pattern {
 					throw new IllegalStateException();
 			}
 			return new Pattern(this);
+		}
+
+		public List<Integer> getUnsetPositions() {
+			List<Integer> res = new LinkedList<Integer>();
+			for (int i = 0; i < holes.length; i++)
+				if (holes[i] == null)
+					res.add(i);
+			return res;
 		}
 	}
 	

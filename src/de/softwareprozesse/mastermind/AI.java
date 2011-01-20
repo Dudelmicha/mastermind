@@ -78,24 +78,7 @@ public class AI {
 				possiblePatterns.remove(p);
 	}
 	
-	/**
-	 * Generates the initial list containing all possible color patterns
-	 * Initial means before the first guess, so that no further information
-	 * is available.
-	 * @return
-	 */
-	private List<Pattern> generateAllPossiblePatterns() {
-		List<Pattern> possiblePatterns = createAllColorPermutations();
-		return possiblePatterns;
-	}
-
-	
-	private List<Pattern> createAllColorPermutations() {
-		List<Color> allcolors = new LinkedList<Color>(Arrays.asList(Color.values()));
-		return buildAllPatterns(permutate(new LinkedList<PatternBuilder>(), allcolors, 0));
 		
-	}
-	
 	/**
 	 * Transforms a list of PatternBuilder objects into a list of Pattern
 	 * objects by calling the build method for each of them
@@ -115,14 +98,6 @@ public class AI {
 			if (containsPatternColorOnPosition(p, c, pos))
 				res = true;
 		return res;			
-	}
-	
-	private List<Pattern> getPatternsWithZeroRightPositions(Pattern[] guesses, PatternAnalysis[] responses) {
-		List<Pattern> res = new LinkedList<Pattern>();
-		for (int i = 0; i < responses.length; i++) 
-			if (responses[i].getNumberOfCorrectPositionedPins() == 0)
-				res.add(guesses[i]);
-		return res;
 	}
 	
 	private boolean containsPatternColorOnPosition(Pattern guess, Color c, int pos) {
@@ -157,21 +132,6 @@ public class AI {
 			}
 		}
 		return builders;
-	}
-	
-	private List<PatternBuilder> permutate(List<PatternBuilder> l, List<Color> colors, int i) {
-		if (i == Settings.NUMBER_OF_PEGS - 1) {
-			for (Color c : colors) {
-				PatternBuilder pb = new PatternBuilder();
-				pb.setColor(c, i);
-				l.add(pb);
-			}
-		} else {
-			for (Color c : colors) {
-				l.addAll(setAsElement(c, i, permutate(new LinkedList<PatternBuilder>(), copyListAndRemoveElement(colors, c), i + 1)));
-			}
-		}
-		return l;
 	}
 	
 	private List<Color> copyListAndRemoveElement(List<Color> l, Color c) {

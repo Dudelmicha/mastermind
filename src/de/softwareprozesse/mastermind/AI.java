@@ -21,7 +21,73 @@ public class AI {
 	}
 	
 	public Pattern pickPattern() {
+		generatePossiblePatterns();
 		return possiblePatterns.get(0);
+	}
+	
+	private void generatePossiblePatterns() {
+		if (possiblePatterns == null) {
+			possiblePatterns = buildAllPatterns(generatePatterns());
+		} else {
+			updatePossiblePatterns();
+		}
+	}
+	
+	// TODO don't add impossible patterns
+	private List<PatternBuilder> generatePatterns() {
+		Pattern lastguess = mastermind.getLastGuessedPattern();
+		PatternAnalysis lastresponse = mastermind.getLastPatternAnalysis();
+		patternUsedToGeneratePossiblePatterns = lastguess;
+		List<List<Integer>> combinations = Combinatorics.combination(lastresponse.getNumberOfCorrectPositionedPins(), Settings.NUMBER_OF_PEGS);
+		List<PatternBuilder> res = new LinkedList<PatternBuilder>();
+		for (List<Integer> intlist : combinations) {
+			PatternBuilder pb = new PatternBuilder();
+			for (int i : intlist)
+				pb.setColor(lastguess.getColor(i), i);
+			res.add(pb);
+		}
+		return permutateUnsetPositions(res);
+	}
+	
+	private void updatePossiblePatterns() {
+		removePatternsContainingImpossibleConstellations(mastermind.getLastGuessedPattern(), mastermind.getLastPatternAnalysis());
+	}
+	
+	private List<PatternBuilder> permutateUnsetPositions(List<PatternBuilder> builders) {
+		List<Integer> unsetPositions;
+		List<List<Integer>> permutations;
+		List<Color> colors;
+		for (PatternBuilder pb : builders) {
+			unsetPositions = pb.getUnsetPositions();
+			colors = pb.getUnusedColors();
+			permutations = Combinatorics.permutation(unsetPositions.size(), colors.size());
+			for (List<Integer> permutation : permutations) {
+				Iterator<Integer> it = permutation.iterator();
+				for (int unsetPosition : unsetPositions) {
+					Color nextColor = colors.get(it.next());
+					pb.setColor(nextColor, unsetPosition);
+				}
+			}
+			assert pb.getUnsetPositions().isEmpty();
+			if (!isPatternPossible(pb))
+				builders.remove(pb);
+		}
+		return builders;
+	}
+	
+	private boolean isPatternPossible(PatternBuilder pb) {
+		for (int i = 0; i < Settings.NUMBER_OF_PEGS; i++)
+			if (!isPossiblePositionForColor(pb.getColor(i), i))
+				return false;
+		return true;
+	}
+
+	private void removePatternsContainingImpossibleConstellations(
+			Pattern lastguess, PatternAnalysis lastresponse) {
+		if (lastresponse.isNoColorAtRightPosition()) {
+			removePatternWithSamePositions(lastguess);
+		}
+		removePatternsContainingImpossibleColors(lastguess, lastresponse);
 	}
 	
 	/**
@@ -35,7 +101,7 @@ public class AI {
 	}
 	
 	private void removePatternsContainingImpossibleColors(Pattern guess, PatternAnalysis response) {
-		if (gotAllColorsRight()) {
+		if (response.gotAllColorsRight()) {
 			removeExcessColors(guess);
 		} else {
 			removePatternsWithColors(guess.getColors());
@@ -52,11 +118,6 @@ public class AI {
 	
 	private boolean gotExcessColors() {
 		return possibleColors.size() == Settings.NUMBER_OF_PEGS;
-	}
-
-	private boolean gotAllColorsRight() {
-		PatternAnalysis lastresponse = mastermind.getResponse(mastermind.getNumberOfGuesses());
-		return lastresponse.getNumberOfCorrectColoredPins() + lastresponse.getNumberOfCorrectPositionedPins() == Settings.NUMBER_OF_PEGS;
 	}
 	
 	//TODO refactor next 3 methods
@@ -92,46 +153,15 @@ public class AI {
 		return res;
 	}
 	
-	private boolean containsAnyPatternColorOnPosition(Pattern[] guesses, Color c, int pos) {
-		boolean res = false;
-		for (Pattern p : guesses)
-			if (containsPatternColorOnPosition(p, c, pos))
-				res = true;
-		return res;			
+	private boolean isPossiblePositionForColor(Color c, int pos) {
+		for (Pattern p : mastermind.getGuesses())
+			if (mastermind.getCorrespondingAnalysis(p).isNoColorAtRightPosition() && containsPatternColorOnPosition(p, c, pos))
+				return false;
+		return true;			
 	}
 	
 	private boolean containsPatternColorOnPosition(Pattern guess, Color c, int pos) {
 		return guess.getColor(pos).equals(c);
-	}
-	
-	// TODO don't add impossible patterns
-	private List<PatternBuilder> generatePatterns(Pattern p, PatternAnalysis pa) {
-		List<List<Integer>> combinations = Combinatorics.combination(pa.getNumberOfCorrectPositionedPins(), Settings.NUMBER_OF_PEGS);
-		patternUsedToGeneratePossiblePatterns = p;
-		List<PatternBuilder> res = new LinkedList<PatternBuilder>();
-		for (List<Integer> intlist : combinations) {
-			PatternBuilder pb = new PatternBuilder();
-			for (int i : intlist)
-				pb.setColor(p.getColor(i), i);
-			res.add(pb);
-		}
-		return res;
-	}
-	
-	private List<PatternBuilder> permutateUnsetPositions(List<PatternBuilder> builders, List<Color> colors) {
-		List<Integer> unsetPositions;
-		List<List<Integer>> permutations;
-		for (PatternBuilder pb : builders) {
-			unsetPositions = pb.getUnsetPositions();
-			permutations = Combinatorics.permutation(unsetPositions.size(), colors.size());
-			for (List<Integer> permutation : permutations) {
-				Iterator<Integer> it = permutation.iterator();
-				for (int unsetPosition : unsetPositions) {
-					pb.setColor(colors.get(it.next()), unsetPosition);
-				}
-			}
-		}
-		return builders;
 	}
 	
 	private List<Color> copyListAndRemoveElement(List<Color> l, Color c) {
@@ -144,22 +174,5 @@ public class AI {
 		for (PatternBuilder pb : l)
 			pb.setColor(c, pos);
 		return l;
-	}
-
-	private void updatePossiblePatterns() {
-		Pattern lastguessed = mastermind.getLastGuessedPattern();
-		PatternAnalysis lastresponse = mastermind.getLastPatternAnalysis();
-		if (possiblePatterns == null) 
-			generatePatterns(lastguessed, lastresponse);
-		else
-			removePatternsContainingImpossibleConstellations(lastguessed, lastresponse);
-	}
-	
-	private void removePatternsContainingImpossibleConstellations(
-			Pattern lastguess, PatternAnalysis lastresponse) {
-		if (lastresponse.isNoColorAtRightPosition()) {
-			removePatternWithSamePositions(lastguess);
-		}
-		removePatternsContainingImpossibleColors(lastguess, lastresponse);
 	}
 }

@@ -1,5 +1,7 @@
 package de.softwareprozesse.mastermind;
 
+import de.softwareprozesse.mastermind.utils.Settings;
+
 public class PatternAnalysis {
 
 	private final int numberOfCorrectPositionedPins;
@@ -12,6 +14,10 @@ public class PatternAnalysis {
 
 	public boolean isNoColorAtRightPosition() {
 		return numberOfCorrectPositionedPins == 0;
+	}
+	
+	public boolean gotAllColorsRight() {
+		return getNumberOfCorrectColoredPins() + getNumberOfCorrectPositionedPins() == Settings.NUMBER_OF_PEGS;
 	}
 	
 	public int getNumberOfCorrectPositionedPins() {

@@ -1,5 +1,9 @@
 package de.softwareprozesse.mastermind;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 import de.softwareprozesse.mastermind.Pattern.PatternBuilder;
 import de.softwareprozesse.mastermind.utils.Settings;
 
@@ -81,5 +85,17 @@ public class Mastermind {
 
 	public PatternAnalysis getLastPatternAnalysis() {
 		return getResponse(numberOfGuesses);
+	}
+
+	public List<Pattern> getGuesses() {
+		return new LinkedList<Pattern>(Arrays.asList(guesses));
+	}
+
+	public PatternAnalysis getCorrespondingAnalysis(Pattern p) {
+		PatternAnalysis res = null;
+		for (int i = 0; i < numberOfGuesses; i++)
+			if (guesses[i].equals(p))
+				res = responses[i];
+		return res;
 	}
 }

@@ -62,6 +62,18 @@ public class Pattern {
 					res.add(i);
 			return res;
 		}
+
+		public List<Color> getUnusedColors() {
+			List<Color> res = Arrays.asList(Color.values());
+			for (Color c : holes)
+				if (c != null)
+					res.remove(c);
+			return res;
+		}
+
+		public Color getColor(int i) {
+			return holes[i];
+		}
 	}
 	
 	private Pattern(PatternBuilder builder) {

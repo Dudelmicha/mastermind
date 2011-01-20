@@ -1,12 +1,9 @@
 package de.softwareprozesse.mastermind;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 import de.softwareprozesse.mastermind.Pattern.PatternBuilder;
 import de.softwareprozesse.mastermind.utils.Combinatorics;
 import de.softwareprozesse.mastermind.utils.Settings;
@@ -15,20 +12,12 @@ public class AI {
 
 	private List<Pattern> possiblePatterns;
 	private Pattern patternUsedToGeneratePossiblePatterns;
-	private final Map<Color, List<Integer>> possiblePositions;
 	private final Mastermind mastermind;
 	private final List<Color> possibleColors;
 	
 	public AI(Mastermind mastermind) {
 		this.mastermind = mastermind;
-		possiblePositions = new HashMap<Color, List<Integer>>();
 		possibleColors = Arrays.asList(Color.values());
-		for (Color c : Color.values()) {
-			List<Integer> l = new LinkedList<Integer>();
-			for (int i = 0; i < Settings.NUMBER_OF_PEGS; i++)
-				l.add(i);
-			possiblePositions.put(c, l);
-		}
 	}
 	
 	public Pattern pickPattern() {

@@ -163,16 +163,4 @@ public class AI {
 	private boolean containsPatternColorOnPosition(Pattern guess, Color c, int pos) {
 		return guess.getColor(pos).equals(c);
 	}
-	
-	private List<Color> copyListAndRemoveElement(List<Color> l, Color c) {
-		List<Color> newlist = new LinkedList<Color>(l);
-		newlist.remove(c);
-		return newlist;
-	}
-	
-	private List<PatternBuilder> setAsElement(Color c, int pos, List<PatternBuilder> l) {
-		for (PatternBuilder pb : l)
-			pb.setColor(c, pos);
-		return l;
-	}
 }

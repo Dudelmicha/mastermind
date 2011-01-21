@@ -26,6 +26,7 @@ public class AI {
 	}
 	
 	private void generatePossiblePatterns() {
+		updatePossibleColors();
 		if (possiblePatterns == null) {
 			possiblePatterns = buildAllPatterns(generatePatterns());
 		} else {
@@ -59,7 +60,7 @@ public class AI {
 		List<Color> colors;
 		for (PatternBuilder pb : builders) {
 			unsetPositions = pb.getUnsetPositions();
-			colors = pb.getUnusedColors();
+			colors = intersection(pb.getUnusedColors(), possibleColors);
 			permutations = Combinatorics.permutation(unsetPositions.size(), colors.size());
 			for (List<Integer> permutation : permutations) {
 				Iterator<Integer> it = permutation.iterator();
@@ -75,6 +76,15 @@ public class AI {
 		return builders;
 	}
 	
+	private List<Color> intersection(List<Color> l1,
+			List<Color> l2) {
+		List<Color> res = new LinkedList<Color>();
+		for (Color c : l1)
+			if (l2.contains(c))
+				res.add(c);
+		return res;
+	}
+
 	private boolean isPatternPossible(PatternBuilder pb) {
 		for (int i = 0; i < Settings.NUMBER_OF_PEGS; i++)
 			if (!isPossiblePositionForColor(pb.getColor(i), i))

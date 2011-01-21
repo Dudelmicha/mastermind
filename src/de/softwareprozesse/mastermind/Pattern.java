@@ -80,7 +80,7 @@ public class Pattern {
 		holes = builder.holes;
 	}
 	
-	protected Color getColor(int pos) {
+	public Color getColor(int pos) {
 		assert 0 <= pos && pos < Settings.NUMBER_OF_PEGS;
 		return holes[pos];
 	}

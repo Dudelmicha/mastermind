@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.softwareprozesse.mastermind.Pattern.PatternBuilder;
+import de.softwareprozesse.mastermind.ai.AI;
 import de.softwareprozesse.mastermind.utils.Settings;
 
 public class Mastermind {
@@ -23,6 +24,7 @@ public class Mastermind {
 		responses = new PatternAnalysis[Settings.MAX_GUESSES];
 	}
 	
+	// TODO nicht jedes Pattern kann analysiert werden
 	public PatternAnalysis commitGuess(Pattern p) {
 		setGuess(p);
 		numberOfGuesses++;
@@ -75,7 +77,7 @@ public class Mastermind {
 		return responses[i - 1];
 	}
 	
-	private PatternAnalysis setResponse(PatternAnalysis pa) {
+	public PatternAnalysis setResponse(PatternAnalysis pa) {
 		return responses[numberOfGuesses - 1] = pa;
 	}
 

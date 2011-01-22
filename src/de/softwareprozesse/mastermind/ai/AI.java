@@ -21,7 +21,7 @@ public class AI {
 	public AI(Mastermind mastermind) {
 		this.mastermind = mastermind;
 		possiblePatterns = new LinkedList<Pattern>();
-		possibleColors = Arrays.asList(Color.values());
+		possibleColors = new LinkedList<Color>(Arrays.asList(Color.values()));
 	}
 	
 	public Pattern pickPattern() {
@@ -29,17 +29,18 @@ public class AI {
 			return PatternBuilder.createRandomPattern();
 		else
 			generatePossiblePatterns();
-		
 		return possiblePatterns.remove(0);
 	}
 	
 	private void generatePossiblePatterns() {
 		updatePossibleColors();
 		if (possiblePatterns.isEmpty()) {
-			possiblePatterns.addAll(buildAllPatterns(generatePatternsBasedOnFirstGuess()));
+			possiblePatterns.addAll(generatePatternsBasedOnFirstGuess());
 		} else {
 			updatePossiblePatterns();
 		}
+		if (!mastermind.getLastPatternAnalysis().gotAllColorsRight())
+			removePatternContainingSameColorsAsGuess(mastermind.getLastGuessedPattern().getColors());
 	}
 
 	private void updatePossibleColors() {
@@ -47,16 +48,14 @@ public class AI {
 		Pattern lastguess = mastermind.getLastGuessedPattern();
 		if (lastresponse.gotAllColorsRight()) {
 			removeExcessColors(lastguess);
-		} else {
-			removePatternsWithColors(lastguess.getColors());
 		}
 	}
 	
-	private List<PatternBuilder> generatePatternsBasedOnFirstGuess() {
+	private List<Pattern> generatePatternsBasedOnFirstGuess() {
 		Pattern lastguess = mastermind.getLastGuessedPattern();
 		PatternAnalysis lastresponse = mastermind.getLastPatternAnalysis();
 		List<List<Integer>> combinations = Combinatorics.combination(lastresponse.getNumberOfCorrectPositionedPins(), Settings.NUMBER_OF_PEGS);
-		List<PatternBuilder> res = new LinkedList<PatternBuilder>();
+		List<Pattern> res = new LinkedList<Pattern>();
 		for (List<Integer> combination : combinations) {
 			PatternGenerator pg = new PatternGenerator(combination, lastguess, possibleColors);
 			res.addAll(pg.generatePatterns());
@@ -96,39 +95,36 @@ public class AI {
 	}
 	
 	private boolean gotExcessColors() {
-		return possibleColors.size() == Settings.NUMBER_OF_PEGS;
+		return possibleColors.size() != Settings.NUMBER_OF_PEGS;
 	}
 	
 	//TODO refactor next 3 methods
 	private void removePatternsWithColor(Color c) {
+		List<Pattern> toBeRemoved = new LinkedList<Pattern>();
 		for (Pattern p : possiblePatterns)
 			if (p.contains(c))
-				possiblePatterns.remove(p);
+				toBeRemoved.add(p);
+		removePatterns(toBeRemoved);
 	}
 	
-	private void removePatternsWithColors(List<Color> colors) {
+	private void removePatternContainingSameColorsAsGuess(List<Color> colors) {
+		List<Pattern> toBeRemoved = new LinkedList<Pattern>();
 		for (Pattern p : possiblePatterns)
-			if (p.contains(colors))
-				possiblePatterns.remove(p);
+			if (p.consistsOf(colors))
+				toBeRemoved.add(p);
+		removePatterns(toBeRemoved);
 	}
 	
 	private void removeAllPatternsWithColorAtPosition(Color c, int pos) {
+		List<Pattern> toBeRemoved = new LinkedList<Pattern>();
 		for (Pattern p : possiblePatterns)
 			if (p.contains(c, pos))
-				possiblePatterns.remove(p);
+				toBeRemoved.add(p);
+		removePatterns(toBeRemoved);
 	}
 	
-		
-	/**
-	 * Transforms a list of PatternBuilder objects into a list of Pattern
-	 * objects by calling the build method for each of them
-	 * @param l list of PatternBuilder objects
-	 * @return list of Pattern objects
-	 */
-	private List<Pattern> buildAllPatterns(List<PatternBuilder> l) {
-		List<Pattern> res = new LinkedList<Pattern>();
-		for (PatternBuilder pb : l)
-			res.add(pb.build());
-		return res;
+	private void removePatterns(List<Pattern> toBeRemoved) {
+		for (Pattern p : toBeRemoved)
+			possiblePatterns.remove(p);
 	}
 }

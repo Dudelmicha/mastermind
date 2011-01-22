@@ -25,6 +25,12 @@ public class Pattern {
 			this.holes = new Color[Settings.NUMBER_OF_PEGS];
 		}
 		
+		public PatternBuilder(PatternBuilder pb) {
+			this.holes = new Color[Settings.NUMBER_OF_PEGS];
+			for (int i = 0; i < holes.length; i++)
+				holes[i] = pb.holes[i];
+		}
+
 		public static Pattern createRandomPattern() {
 			Random rnd = new Random();
 			PatternBuilder pb = new PatternBuilder();
@@ -70,7 +76,8 @@ public class Pattern {
 		}
 
 		public List<Color> getUnusedColors() {
-			List<Color> res = Arrays.asList(Color.values());
+			List<Color> res = new LinkedList<Color>();
+			res.addAll(Arrays.asList(Color.values()));
 			for (Color c : holes)
 				if (c != null)
 					res.remove(c);
@@ -143,7 +150,7 @@ public class Pattern {
 		return Arrays.asList(holes);
 	}
 
-	public boolean contains(List<Color> colors) {
+	public boolean consistsOf(List<Color> colors) {
 		boolean res = true;
 		for (Color c : colors) {
 			if (!contains(c))

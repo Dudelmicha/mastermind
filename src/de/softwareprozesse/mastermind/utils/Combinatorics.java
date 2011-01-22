@@ -17,6 +17,10 @@ public class Combinatorics {
 	 */
 	public static List<List<Integer>> combination(int k, int n) {
 		List<List<Integer>> l = new LinkedList<List<Integer>>();
+		if (k == 0) {
+			l.add(new LinkedList<Integer>());
+			return l;
+		}
 		int[] comb = new int[k];
 		for (int i = 0; i < k; i++)
 			comb[i] = i;

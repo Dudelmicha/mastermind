@@ -1,6 +1,7 @@
 package de.softwareprozesse.mastermind.ai;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import de.softwareprozesse.mastermind.Color;
@@ -24,41 +25,39 @@ public class PatternGenerator {
 	}
 
 	private void setColorsAmusedToBeRight() {
+		result = new LinkedList<PatternBuilder>();
 		PatternBuilder pb = new PatternBuilder();
 		for (int i : indizesAsumedToHaveRightColor)
 			pb.setColor(patternUsedToGeneratePossiblePatterns.getColor(i), i);
 		result.add(pb);
 	}
 	
-	public List<PatternBuilder> generatePatterns() {
+	public List<Pattern> generatePatterns() {
 		return permutateUnsetPositions(result);
 	}
 	
-	private List<PatternBuilder> permutateUnsetPositions(List<PatternBuilder> builders) {
+	private List<Pattern> permutateUnsetPositions(List<PatternBuilder> builders) {
 		List<Integer> unsetPositions;
 		List<List<Integer>> permutations;
 		List<Color> colorsToPermutateOver;
-		boolean patternPossible;
+		List<Pattern> result = new LinkedList<Pattern>();
 		for (PatternBuilder pb : builders) {
 			unsetPositions = pb.getUnsetPositions();
 			colorsToPermutateOver = Functions.intersection(pb.getUnusedColors(), possibleColors);
 			permutations = Combinatorics.permutation(unsetPositions.size(), colorsToPermutateOver.size());
-			patternPossible = true;
 			for (List<Integer> permutation : permutations) {
+				PatternBuilder pbnew = new PatternBuilder(pb);
 				Iterator<Integer> it = permutation.iterator();
 				for (int unsetPosition : unsetPositions) {
 					Color nextColor = colorsToPermutateOver.get(it.next());
 					if (isPositionPossibleForColor(nextColor, unsetPosition))
-						pb.setColor(nextColor, unsetPosition);
-					else
-						patternPossible = false;
+						pbnew.setColor(nextColor, unsetPosition);
 				}
-			}
-			assert pb.getUnsetPositions().isEmpty();
-			if (!patternPossible)
-				builders.remove(pb);
+				if (pbnew.getUnsetPositions().isEmpty())
+					result.add(pbnew.build());
+			}	
 		}
-		return builders;
+		return result;
 	}
 
 	private boolean isPositionPossibleForColor(Color c, int pos) {

@@ -25,19 +25,24 @@ public class Mastermind {
 	}
 	
 	// TODO nicht jedes Pattern kann analysiert werden
-	public PatternAnalysis commitGuess(Pattern p) {
+	public void commitGuess(Pattern p) {
 		setGuess(p);
+		if (solution != null)
+			commitResponse(p.analyze(solution));
 		numberOfGuesses++;
-		return p.analyze(solution);
 	}
 	
-	public Pattern createGuess() {
+	public void commitResponse(PatternAnalysis pa) {
+		responses[numberOfGuesses] = pa;
+	}
+	
+	public void createAndCommitGuess() {
 		Pattern p;
 		if (numberOfGuesses == 0)
 			p = PatternBuilder.createRandomPattern();
 		else
 			p = ai.pickPattern();
-		return p;
+		commitGuess(p);
 	}
 		
 	/**
@@ -77,10 +82,6 @@ public class Mastermind {
 		return responses[i - 1];
 	}
 	
-	public PatternAnalysis setResponse(PatternAnalysis pa) {
-		return responses[numberOfGuesses - 1] = pa;
-	}
-
 	public Pattern getLastGuessedPattern() {
 		return getGuess(numberOfGuesses);
 	}

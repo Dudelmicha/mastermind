@@ -7,7 +7,7 @@ import de.softwareprozesse.mastermind.Color;
 
 public class Functions {
 
-	public List<Color> intersection(List<Color> l1,
+	public static List<Color> intersection(List<Color> l1,
 			List<Color> l2) {
 		List<Color> res = new LinkedList<Color>();
 		for (Color c : l1)

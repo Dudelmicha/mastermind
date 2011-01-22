@@ -5,7 +5,28 @@ import java.util.List;
 
 public class Combinatorics {
 
-	public static boolean getNextCombination(int[] comb, int k, int n) {
+	/**
+	 * Calculates all possibilities to pick k elements from a set of n elements
+	 * The elements are the number from zero to n-1
+	 * This algorithm was copied and slightly modified from the book
+	 * 'C/C++ Von den Grundlagen zur professionellen Programmierung'
+	 * 
+	 * @param k	number of elements to pick
+	 * @param n	size of the set to choose from
+	 * @return all combinations "n over k"
+	 */
+	public static List<List<Integer>> combination(int k, int n) {
+		List<List<Integer>> l = new LinkedList<List<Integer>>();
+		int[] comb = new int[k];
+		for (int i = 0; i < k; i++)
+			comb[i] = i;
+		do {
+			l.add(intArrayToList(comb));
+		} while (getNextCombination(comb, k, n));
+		return l;
+	}
+	
+	private static boolean getNextCombination(int[] comb, int k, int n) {
 		int i = k - 1;
 		comb[i]++;
 		while ((i > 0) && (comb[i] >= n - k + 1 + i)) {
@@ -22,17 +43,15 @@ public class Combinatorics {
 		return true;
 	}
 
-	public static List<List<Integer>> combination(int k, int n) {
-		List<List<Integer>> l = new LinkedList<List<Integer>>();
-		int[] comb = new int[k];
-		for (int i = 0; i < k; i++)
-			comb[i] = i;
-		do {
-			l.add(intArrayToList(comb));
-		} while (getNextCombination(comb, k, n));
-		return l;
-	}
-
+	/**
+	 * Calculates all k permutations of the number 0 to n-1
+	 * This algorithm was copied and slightly modified from the book
+	 * 'C/C++ Von den Grundlagen zur professionellen Programmierung'
+	 * 
+	 * @param k	size of one result permutation
+	 * @param n number of elements used in the permutation
+	 * @return all permutation as list of integer lists
+	 */
 	public static List<List<Integer>> permutation(int k, int n) {
 		return permutationHelper(k, n, new int[k], 0, new LinkedList<List<Integer>>());
 	}
@@ -74,29 +93,11 @@ public class Combinatorics {
 			
 	}
 
-	public static List<Integer> intArrayToList(int[] array) {
+	private static List<Integer> intArrayToList(int[] array) {
 		List<Integer> res = new LinkedList<Integer>();
 		for (int i : array)
 			res.add(i);
 		return res;
-	}
-
-	public static void main(String[] args) {
-		System.out.println("Combination: ");
-		List<List<Integer>> l = combination(2, 4);
-		for (List<Integer> il : l) {
-			for (int i : il)
-				System.out.print(i);
-			System.out.println();
-		}
-		
-		System.out.println("Permutation: ");
-		List<List<Integer>> l2 =  permutation(2, 3);
-		for (List<Integer> il : l2) {
-			for (int i : il)
-				System.out.print(i);
-			System.out.println();
-		}
 	}
 }
 

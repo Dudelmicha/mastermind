@@ -37,18 +37,10 @@ public class Mastermind {
 		responses[numberOfGuesses - 1] = pa;
 	}
 	
-	/*public void createAndCommitGuess() {
-		Pattern p;
-		if (numberOfGuesses == 0)
-			p = PatternBuilder.createRandomPattern();
-		else
-			p = ai.pickPattern();
-		commitGuess(p);
-	}*/
-		
 	public void createAndCommitGuess() {
 		Pattern p;
-		p = PatternBuilder.createRandomPattern();
+		
+			p = ai.pickPattern();
 		commitGuess(p);
 	}
 	

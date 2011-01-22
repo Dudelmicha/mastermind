@@ -1,7 +1,6 @@
 package de.softwareprozesse.mastermind.ai;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,41 +14,75 @@ import de.softwareprozesse.mastermind.utils.Settings;
 
 public class AI {
 
-	private List<Pattern> possiblePatterns;
-	private Pattern patternUsedToGeneratePossiblePatterns;
+	private final List<Pattern> possiblePatterns;
 	private final Mastermind mastermind;
 	private final List<Color> possibleColors;
 	
 	public AI(Mastermind mastermind) {
 		this.mastermind = mastermind;
+		possiblePatterns = new LinkedList<Pattern>();
 		possibleColors = Arrays.asList(Color.values());
 	}
 	
 	public Pattern pickPattern() {
-		generatePossiblePatterns();
-		return possiblePatterns.get(0);
+		if (mastermind.getNumberOfGuesses() == 0)
+			return PatternBuilder.createRandomPattern();
+		else
+			generatePossiblePatterns();
+		
+		return possiblePatterns.remove(0);
 	}
 	
 	private void generatePossiblePatterns() {
 		updatePossibleColors();
-		if (possiblePatterns == null) {
-			possiblePatterns = buildAllPatterns(generatePatterns());
+		if (possiblePatterns.isEmpty()) {
+			possiblePatterns.addAll(buildAllPatterns(generatePatternsBasedOnFirstGuess()));
 		} else {
 			updatePossiblePatterns();
 		}
 	}
-	
+
 	private void updatePossibleColors() {
-		// TODO Auto-generated method stub
+		PatternAnalysis lastresponse = mastermind.getLastPatternAnalysis();
+		Pattern lastguess = mastermind.getLastGuessedPattern();
+		if (lastresponse.gotAllColorsRight()) {
+			removeExcessColors(lastguess);
+		} else {
+			removePatternsWithColors(lastguess.getColors());
+		}
+	}
+	
+	private List<PatternBuilder> generatePatternsBasedOnFirstGuess() {
+		Pattern lastguess = mastermind.getLastGuessedPattern();
+		PatternAnalysis lastresponse = mastermind.getLastPatternAnalysis();
+		List<List<Integer>> combinations = Combinatorics.combination(lastresponse.getNumberOfCorrectPositionedPins(), Settings.NUMBER_OF_PEGS);
+		List<PatternBuilder> res = new LinkedList<PatternBuilder>();
+		for (List<Integer> combination : combinations) {
+			PatternGenerator pg = new PatternGenerator(combination, lastguess, possibleColors);
+			res.addAll(pg.generatePatterns());
+		}
+		return res;
+	}
+	
+	private void updatePossiblePatterns() {
+		removePatternsContainingImpossibleConstellations();
 		
 	}
 	
-	private void removePatternsContainingImpossibleConstellations(
-			Pattern lastguess, PatternAnalysis lastresponse) {
+	private void removeExcessColors(Pattern guess) {
+		if (gotExcessColors())
+			for (Color c : guess.getNotContainingColors()) {
+				removePatternsWithColor(c);
+				possibleColors.remove(c);
+			}
+	}
+	
+	private void removePatternsContainingImpossibleConstellations() {
+		PatternAnalysis lastresponse = mastermind.getLastPatternAnalysis();
+		Pattern lastguess = mastermind.getLastGuessedPattern();
 		if (lastresponse.isNoColorAtRightPosition()) {
 			removePatternWithSamePositions(lastguess);
 		}
-		removePatternsContainingImpossibleColors(lastguess, lastresponse);
 	}
 	
 	/**
@@ -60,22 +93,6 @@ public class AI {
 	private void removePatternWithSamePositions(Pattern guess) {
 		for (int i = 0; i < Settings.NUMBER_OF_PEGS; i++) 
 			removeAllPatternsWithColorAtPosition(guess.getColor(i), i);
-	}
-	
-	private void removePatternsContainingImpossibleColors(Pattern guess, PatternAnalysis response) {
-		if (response.gotAllColorsRight()) {
-			removeExcessColors(guess);
-		} else {
-			removePatternsWithColors(guess.getColors());
-		}
-	}
-	
-	private void removeExcessColors(Pattern guess) {
-		if (gotExcessColors())
-			for (Color c : guess.getNotContainingColors()) {
-				removePatternsWithColor(c);
-				possibleColors.remove(c);
-			}
 	}
 	
 	private boolean gotExcessColors() {
@@ -113,16 +130,5 @@ public class AI {
 		for (PatternBuilder pb : l)
 			res.add(pb.build());
 		return res;
-	}
-	
-	private boolean isPossiblePositionForColor(Color c, int pos) {
-		for (Pattern p : mastermind.getGuesses())
-			if (mastermind.getCorrespondingAnalysis(p).isNoColorAtRightPosition() && containsPatternColorOnPosition(p, c, pos))
-				return false;
-		return true;			
-	}
-	
-	private boolean containsPatternColorOnPosition(Pattern guess, Color c, int pos) {
-		return guess.getColor(pos).equals(c);
 	}
 }

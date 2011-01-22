@@ -151,4 +151,22 @@ public class Pattern {
 		}
 		return res;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		if (!(o instanceof Pattern))
+			return false;
+		Pattern p = (Pattern) o;
+		return Arrays.equals(holes, p.holes);
+	}
+	
+	@Override
+	public int hashCode() {
+		int result = 17;
+		for (Color c : holes)
+			result = 31 * result + Integer.parseInt(c.toString());
+		return result;
+	}
 }

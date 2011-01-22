@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import de.softwareprozesse.mastermind.utils.Combinatorics;
 import de.softwareprozesse.mastermind.utils.Settings;
 
 /**
@@ -27,8 +28,13 @@ public class Pattern {
 		public static Pattern createRandomPattern() {
 			Random rnd = new Random();
 			PatternBuilder pb = new PatternBuilder();
-			for (int i = 0; i < Settings.NUMBER_OF_PEGS; i++)
-				pb.setColor(Color.fromInt(rnd.nextInt(Settings.NUMBER_OF_COLORS) + 1), i);
+			List<List<Integer>> allPermutations = Combinatorics.permutation(Settings.NUMBER_OF_PEGS, Settings.NUMBER_OF_COLORS);
+			int randomChoice = rnd.nextInt(allPermutations.size() - 1);
+			int pos = 0;
+			for (int i : allPermutations.get(randomChoice)) {
+				pb.setColor(Color.fromInt(i + 1), pos);
+				pos++;
+			}
 			return pb.build();
 		}
 		
@@ -95,15 +101,11 @@ public class Pattern {
 		int correctPos = 0;
 		int correctColor = 0;
 		for (int i = 0; i < holes.length; i++) {
-			if (getColor(i).equals(solution.getColor(i)))
+			if (solution.contains(getColor(i), i))
 				correctPos++;
 			else
-				for (int j = (i + 1) % holes.length; j != i; j = (j + 1) % holes.length) {
-					if (getColor(i).equals(solution.getColor(j))) {
-						correctColor++;
-						break;
-					}
-				}
+				if (solution.contains(getColor(i)))
+					correctColor++;
 		}
 		return new PatternAnalysis(correctPos, correctColor);
 	}

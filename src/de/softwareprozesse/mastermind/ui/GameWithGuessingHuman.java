@@ -9,6 +9,8 @@ import java.util.Scanner;
 
 public class GameWithGuessingHuman extends Game {
 
+	private static final String REGEX_FOR_PATTERN_REPRESENTED_BY_NUMBERS = "\\d{4,}+";
+	
 	public GameWithGuessingHuman(Mastermind mastermind) {
 		super(mastermind);
 		startGame();
@@ -16,11 +18,11 @@ public class GameWithGuessingHuman extends Game {
 		
 	void startGame() {
 		System.out.println("Game got started. You are guessing...");
-		while (!mastermind.isGameFinished()) {
+		do {
 			System.out.print((mastermind.getNumberOfGuesses() + 1) + ".\t");
 			mastermind.commitGuess(TextObjectConverter.buildPatternFromString(parseGuess()));
 			printResponse();
-		}
+		} while (!mastermind.isGameFinished());
 		printWinner();
 	}
 
@@ -30,7 +32,7 @@ public class GameWithGuessingHuman extends Game {
 	}
 
 	private String parseGuess() {
-		return scanner.next("\\d{4,}+");
+		return scanner.next(REGEX_FOR_PATTERN_REPRESENTED_BY_NUMBERS);
 	}
 
 	private static void printWelcomeMessage() {
@@ -51,7 +53,7 @@ public class GameWithGuessingHuman extends Game {
 		Scanner scanner = new Scanner(System.in);
 		byte answer;		
 		do {
-			System.out.println("Would you like to be the codemaker (1) or " +
+			System.out.print("Would you like to be the codemaker (1) or " +
 				"the codebreaker (2): ");
 			answer = scanner.nextByte();
 		} while (answer != 1 && answer != 2);
@@ -59,11 +61,12 @@ public class GameWithGuessingHuman extends Game {
 		if (answer == 1) {
 			System.out.println("Alright. Please create a code.");
 			solution = null;
-			new GameWithGuessingHuman(new Mastermind(solution, false));
+			new GameWithGuessingAI(new Mastermind(solution, true));
+		
 		} else {
 			solution = PatternBuilder.createRandomPattern();
 			System.out.println("Okay. A code has been created for you. Please, enter your first guess. ");
-			new GameWithGuessingAI(new Mastermind(solution, true));
+			new GameWithGuessingHuman(new Mastermind(solution, false));
 		}	
 	}
 }

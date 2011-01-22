@@ -23,9 +23,9 @@ public class TextObjectConverter {
 		int i;
 		for (i = 0; i < pa.getNumberOfCorrectPositionedPins(); i++)
 			res += "s";
-		for (; i < pa.getNumberOfCorrectColoredPins(); i++)
+		for (i = 0; i < pa.getNumberOfCorrectColoredPins(); i++)
 			res += "w";
-		for (; i < Settings.NUMBER_OF_PEGS; i++)
+		for (i = 0; i < Settings.NUMBER_OF_PEGS - pa.getNumberOfCorrectPositionedPins() - pa.getNumberOfCorrectColoredPins(); i++)
 			res += ".";
 		return res;
 	}

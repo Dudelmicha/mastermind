@@ -5,6 +5,8 @@ import de.softwareprozesse.mastermind.Pattern;
 
 public class GameWithGuessingAI extends Game {
 	
+	private static final String REGEX_FOR_FEEDBACK_TO_PATTERN = "[sw\\.]{4,}+";
+	
 	public GameWithGuessingAI(Mastermind mastermind) {
 		super(mastermind);
 		startGame();
@@ -12,23 +14,22 @@ public class GameWithGuessingAI extends Game {
 
 	void startGame() {
 		System.out.println("Game got started. AI is guessing...");
-		while (!mastermind.isGameFinished()) {
+		do {
 			System.out.print((mastermind.getNumberOfGuesses() + 1) + ".\t");
 			mastermind.createAndCommitGuess();
 			printGuess(mastermind.getLastGuessedPattern());
 			mastermind.commitResponse(TextObjectConverter.buildPatternAnalysisFromString(parseResponse()));
-			
-		}
+		} while (!mastermind.isGameFinished());
 		printWinner();
 	}
 	
 	private void printGuess(Pattern guess) {
 		System.out.print(guess.toString());
-		System.out.println("\t");
+		System.out.print("\t");
 	}
 	
 	private String parseResponse() {
-		return scanner.next("s*+w*+'\\.*+");
+		return scanner.next(REGEX_FOR_FEEDBACK_TO_PATTERN);
 	}
 
 	private void printWinner() {

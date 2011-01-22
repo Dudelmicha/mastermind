@@ -34,7 +34,7 @@ public class Combinatorics {
 	}
 
 	public static List<List<Integer>> permutation(int k, int n) {
-		return permutationHelper(k, n, new int[2], 0, new LinkedList<List<Integer>>());
+		return permutationHelper(k, n, new int[k], 0, new LinkedList<List<Integer>>());
 	}
 	
 	private static List<List<Integer>> permutationHelper(int k, int n, int[] array, int x, List<List<Integer>> res) {

@@ -27,24 +27,31 @@ public class Mastermind {
 	// TODO nicht jedes Pattern kann analysiert werden
 	public void commitGuess(Pattern p) {
 		setGuess(p);
+		numberOfGuesses++;
 		if (solution != null)
 			commitResponse(p.analyze(solution));
-		numberOfGuesses++;
+		
 	}
 	
 	public void commitResponse(PatternAnalysis pa) {
-		responses[numberOfGuesses] = pa;
+		responses[numberOfGuesses - 1] = pa;
 	}
 	
-	public void createAndCommitGuess() {
+	/*public void createAndCommitGuess() {
 		Pattern p;
 		if (numberOfGuesses == 0)
 			p = PatternBuilder.createRandomPattern();
 		else
 			p = ai.pickPattern();
 		commitGuess(p);
-	}
+	}*/
 		
+	public void createAndCommitGuess() {
+		Pattern p;
+		p = PatternBuilder.createRandomPattern();
+		commitGuess(p);
+	}
+	
 	/**
 	 * checks if game is finished
 	 * @return

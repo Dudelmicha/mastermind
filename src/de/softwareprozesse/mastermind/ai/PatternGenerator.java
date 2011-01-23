@@ -16,14 +16,21 @@ public class PatternGenerator {
 	private List<Integer> indizesAsumedToHaveRightColor;
 	private List<PatternBuilder> result;
 	private List<Color> possibleColors;
-	
+	/**
+         *
+         * @param combination the combination of colors
+         * @param lastguess the last guessed pattern
+         * @param possibleColors which colors would be legal
+         */
 	public PatternGenerator(List<Integer> combination, Pattern lastguess, List<Color> possibleColors) {
 		patternUsedToGeneratePossiblePatterns = lastguess;
 		indizesAsumedToHaveRightColor = combination;
 		this.possibleColors = possibleColors;
 		setColorsAmusedToBeRight();
 	}
-
+        /**
+         * sets the result to an list iwth just on pattern
+         */
 	private void setColorsAmusedToBeRight() {
 		result = new LinkedList<PatternBuilder>();
 		PatternBuilder pb = new PatternBuilder();
@@ -31,11 +38,18 @@ public class PatternGenerator {
 			pb.setColor(patternUsedToGeneratePossiblePatterns.getColor(i), i);
 		result.add(pb);
 	}
-	
+	/**
+         *
+         * @return a list of patterns
+         */
 	public List<Pattern> generatePatterns() {
 		return permutateUnsetPositions(result);
 	}
-	
+	/**
+         *
+         * @param builders, which builds different codes
+         * @return a list of all permutatation, with valid setted positions of colors
+         */
 	private List<Pattern> permutateUnsetPositions(List<PatternBuilder> builders) {
 		List<Integer> unsetPositions;
 		List<List<Integer>> permutations;
@@ -59,7 +73,12 @@ public class PatternGenerator {
 		}
 		return result;
 	}
-
+/**
+ *
+ * @param c checked color
+ * @param pos checked position
+ * @return could the color be on this place?
+ */
 	private boolean isPositionPossibleForColor(Color c, int pos) {
 		return !patternUsedToGeneratePossiblePatterns.contains(c, pos);	
 	}

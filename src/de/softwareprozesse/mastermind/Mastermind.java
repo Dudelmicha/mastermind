@@ -16,7 +16,11 @@ public class Mastermind {
 	private final Pattern[] guesses;
 	private final PatternAnalysis[] responses;
 	private final AI ai;
-	
+	/**
+         *
+         * @param solution, which be stored
+         * @param ai determines if the player want to guess or not
+         */
 	public Mastermind(Pattern solution, boolean ai) {
 		numberOfGuesses = 0;
 		this.solution = solution;

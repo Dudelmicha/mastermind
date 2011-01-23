@@ -7,7 +7,11 @@ import de.softwareprozesse.mastermind.model.Pattern.PatternBuilder;
 import de.softwareprozesse.mastermind.utils.Settings;
 
 public class TextObjectConverter {
-
+        /**
+         * checks the string, and builds an valid pattern, if the string is valid
+         * @param s the specified string to build an valid pattern
+         * @return the builded pattern
+         */
 	public static Pattern buildPatternFromString(String s) {
 		if (s.length() != Settings.NUMBER_OF_PEGS)
 			throw new IllegalArgumentException("Numbers of pegs don't match. Given: " + s.length() + " .Expected: " + Settings.NUMBER_OF_PEGS);
@@ -17,7 +21,11 @@ public class TextObjectConverter {
 		}
 		return b.build();
 	}
-	
+	/**
+         *
+         * @param pa the analysis-object of an pattern
+         * @return builds a string containing the result of the analysis
+         */
 	public static String patternAnalysisToString(PatternAnalysis pa) {
 		String res = "";
 		int i;
@@ -29,11 +37,20 @@ public class TextObjectConverter {
 			res += ".";
 		return res;
 	}
-
+        /**
+         *
+         * @param response = given response of the user
+         * @return the patternanalysis-object of the given response
+         */
 	public static PatternAnalysis buildPatternAnalysisFromString(String response) {
 		return new PatternAnalysis(getNumberOfOccurrences('s', response), getNumberOfOccurrences('w', response));
 	}
-
+/**
+ *
+ * @param c the letter of query
+ * @param response the given response which will be analysed
+ * @return the number of c in the response
+ */
 	private static int getNumberOfOccurrences(char c, String response) {
 		int number = 0;
 		for (int i = 0; i < response.length(); i++)

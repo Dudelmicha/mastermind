@@ -1,4 +1,4 @@
-package de.softwareprozesse.mastermind;
+package de.softwareprozesse.mastermind.model;
 
 import de.softwareprozesse.mastermind.utils.Settings;
 

@@ -3,7 +3,7 @@ package de.softwareprozesse.mastermind.utils;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.softwareprozesse.mastermind.Color;
+import de.softwareprozesse.mastermind.model.Color;
 
 public class Functions {
 

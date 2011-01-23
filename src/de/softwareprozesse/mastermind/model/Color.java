@@ -1,4 +1,4 @@
-package de.softwareprozesse.mastermind;
+package de.softwareprozesse.mastermind.model;
 
 import java.util.HashMap;
 import java.util.Map;

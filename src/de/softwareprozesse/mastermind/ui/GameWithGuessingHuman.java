@@ -1,9 +1,9 @@
 package de.softwareprozesse.mastermind.ui;
 
-import de.softwareprozesse.mastermind.Color;
 import de.softwareprozesse.mastermind.Mastermind;
-import de.softwareprozesse.mastermind.Pattern;
-import de.softwareprozesse.mastermind.Pattern.PatternBuilder;
+import de.softwareprozesse.mastermind.model.Color;
+import de.softwareprozesse.mastermind.model.Pattern;
+import de.softwareprozesse.mastermind.model.Pattern.PatternBuilder;
 
 import java.util.Scanner;
 

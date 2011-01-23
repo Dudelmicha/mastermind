@@ -1,7 +1,7 @@
 package de.softwareprozesse.mastermind.ui;
 
 import de.softwareprozesse.mastermind.Mastermind;
-import de.softwareprozesse.mastermind.Pattern;
+import de.softwareprozesse.mastermind.model.Pattern;
 
 public class GameWithGuessingAI extends Game {
 	

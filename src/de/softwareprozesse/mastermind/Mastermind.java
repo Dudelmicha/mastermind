@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.softwareprozesse.mastermind.ai.AI;
+import de.softwareprozesse.mastermind.model.Pattern;
+import de.softwareprozesse.mastermind.model.PatternAnalysis;
 import de.softwareprozesse.mastermind.utils.Settings;
 
 public class Mastermind {

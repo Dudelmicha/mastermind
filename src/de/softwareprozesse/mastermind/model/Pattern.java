@@ -1,4 +1,4 @@
-package de.softwareprozesse.mastermind;
+package de.softwareprozesse.mastermind.model;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -43,16 +43,7 @@ public class Pattern {
 			}
 			return pb.build();
 		}
-		
-		@Deprecated
-		public int getNextUnsetPosition(int pos) {
-			while (++pos < holes.length) {
-				if (holes[pos] == null)
-					return pos;
-			}
-			return -1;
-		}
-		
+				
 		public PatternBuilder setColor(Color color, int pos) {
 			assert 0 <= pos && pos < Settings.NUMBER_OF_PEGS;
 			holes[pos] = color;
@@ -137,15 +128,6 @@ public class Pattern {
 		return getColor(pos).equals(othercolor);
 	}
 	
-	@Override
-	public String toString() {
-		String res = "";
-		for (Color c : holes) {
-			res += c.toString();
-		}
-		return res;
-	}
-
 	public List<Color> getColors() {
 		return Arrays.asList(holes);
 	}
@@ -155,6 +137,15 @@ public class Pattern {
 		for (Color c : colors) {
 			if (!contains(c))
 				res = false;
+		}
+		return res;
+	}
+	
+	@Override
+	public String toString() {
+		String res = "";
+		for (Color c : holes) {
+			res += c.toString();
 		}
 		return res;
 	}
